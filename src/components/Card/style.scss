@@ -1,0 +1,12 @@
+.cardContent {
+    font-size: 30px;
+    text-align: center;
+    margin: 17px;
+    border: 6px solid rgb(120, 206, 221);
+    box-shadow: 11px 11px 4px black;
+    border-radius: 11px;
+}
+
+.cardContent:hover {
+    transform: scale(1.5);
+}

@@ -18,7 +18,7 @@ export default function Layout() {
   React.useEffect(() => {
     const body = {
       api_key: giphyApiKey,
-      limit: 40,
+      limit: 100,
     };
     getGifsListMutation(body);
   }, [getGifsListMutation, giphyApiKey]);
