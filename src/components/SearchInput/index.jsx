@@ -1,51 +1,44 @@
 import React from "react";
-import TextField from "@mui/material/TextField";
+import Chip from "@mui/material/Chip";
 import Autocomplete from "@mui/material/Autocomplete";
-import parse from "autosuggest-highlight/parse";
-import match from "autosuggest-highlight/match";
+import TextField from "@mui/material/TextField";
 
 import "./style.scss";
 
-import { top100Films } from "../../utils";
+export default function SearchInput(props) {
+  const { allGifsData, fetchingGifsList, getGifsListFetched } = props;
 
-export default function SearchInput() {
+  const topGifData = React.useMemo(() => {
+    if (allGifsData && getGifsListFetched) {
+      return allGifsData?.map((item) => {
+        return { id: item.id, title: item.title, imageUrl: item.embed_url };
+      });
+    }
+  }, [getGifsListFetched, allGifsData]);
+
+  console.log(topGifData, "topGifData");
+
   return (
     <div className="root-search-input">
       <Autocomplete
-        id="highlights-demo"
-        fullWidth={true}
+        multiple
+        freeSolo
+        id="tags-filled"
         sx={{ width: 500 }}
-        options={top100Films}
-        getOptionLabel={(option) => option.title}
+        loading={fetchingGifsList}
+        options={topGifData?.map((option) => option.title)}
+        renderTags={(value, getTagProps) =>
+          value.map((option, index) => (
+            <Chip
+              variant="outlined"
+              label={option}
+              {...getTagProps({ index })}
+            />
+          ))
+        }
         renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Search for a GIFs"
-            margin="normal"
-            variant="standard"
-          />
+          <TextField {...params} label="Search for a GIFs" variant="standard" />
         )}
-        renderOption={(props, option, { inputValue }) => {
-          const matches = match(option.title, inputValue);
-          const parts = parse(option.title, matches);
-
-          return (
-            <li {...props}>
-              <div>
-                {parts.map((part, index) => (
-                  <span
-                    key={index}
-                    style={{
-                      fontWeight: part.highlight ? 700 : 400,
-                    }}
-                  >
-                    {part.text}
-                  </span>
-                ))}
-              </div>
-            </li>
-          );
-        }}
       />
     </div>
   );
