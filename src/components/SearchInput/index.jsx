@@ -3,7 +3,6 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 import GifCard from "../Card";
 
@@ -11,7 +10,7 @@ import "./style.scss";
 
 export default function SearchInput(props) {
   const { allGifsData, fetchingGifsList, getGifsListFetched } = props;
-  const [selectedGifs, setSelectedGifs] = React.useState([])
+  const [selectedGifs, setSelectedGifs] = React.useState([]);
 
   const topGifData = React.useMemo(() => {
     if (allGifsData && getGifsListFetched) {
@@ -35,6 +34,12 @@ export default function SearchInput(props) {
     });
   }
 
+  const deleteSelectedGif = (selectedId) => {
+    setSelectedGifs((prevState) => {
+      return (prevState.filter((_item, index) => index !== selectedId))
+    });
+  }
+
 
   return (
     <>
@@ -44,7 +49,7 @@ export default function SearchInput(props) {
           <Autocomplete
             autoHighlight
             id="highlights-demo"
-            sx={{ width: 500 }}
+            sx={{ width: 550 }}
             clearIcon={null}
             loading={fetchingGifsList}
             options={excludedDuplicateData}
@@ -60,7 +65,7 @@ export default function SearchInput(props) {
               return (
                 <li {...props}>
                   <div>
-                    {parts.map((part, index) => (
+                    {parts?.map((part, index) => (
                       <span
                         key={index}
                         style={{
@@ -77,14 +82,11 @@ export default function SearchInput(props) {
           />
         </div>
         <div className="gifContent">
-          {selectedGifs.filter((d) => d !== null)?.map((item) => {
+          {selectedGifs?.filter((d) => d !== null)?.map((item, index) => {
             return (
-              <>
-                <div key={item} className="giftDelete">
-                  <GifCard imageUrl={item?.imageUrl} />
-                  <DeleteIcon id="deleteIcon" />
-                </div>
-              </>
+              <div key={index}>
+                <GifCard imageUrl={item?.imageUrl} deleteSelectedGif={deleteSelectedGif} selectedId={index} />
+              </div>
             )
           })}
         </div>
