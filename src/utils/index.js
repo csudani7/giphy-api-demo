@@ -11,23 +11,3 @@ export const axiosInitialParams = {
   referrer: "no-referrer",
   withCredentials: true,
 };
-
-/* Global Errors state utils */
-export const getErrorMessage = (errors, fieldName, fieldLabel) => {
-  if (errors[fieldName]) {
-    const { type } = errors[fieldName];
-    switch (type) {
-      case "required":
-        return `${fieldLabel} is required`;
-      case "sameAs":
-        return "Passwords do not match. Please try again.";
-      case "pattern":
-        return `Invalid ${fieldLabel}`;
-      default:
-        console.error(`Unknow error type: ${type}`);
-        return type;
-    }
-  } else {
-    return false;
-  }
-};

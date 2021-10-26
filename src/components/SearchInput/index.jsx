@@ -1,8 +1,8 @@
 import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import parse from 'autosuggest-highlight/parse';
-import match from 'autosuggest-highlight/match';
+import parse from "autosuggest-highlight/parse";
+import match from "autosuggest-highlight/match";
 
 import GifCard from "../Card";
 
@@ -21,77 +21,81 @@ export default function SearchInput(props) {
   }, [getGifsListFetched, allGifsData]);
 
   const excludedDuplicateData = topGifData?.reduce((unique, o) => {
-    if (!unique.some(obj => obj.title === o.title)) {
+    if (!unique.some((obj) => obj.title === o.title)) {
       unique.push(o);
     }
     return unique;
   }, []);
 
-
   const handleChange = (_e, newValue) => {
     setSelectedGifs((prevState) => {
-      return ([...prevState, newValue])
+      return [...prevState, newValue];
     });
-  }
+  };
 
   const deleteSelectedGif = (selectedId) => {
     setSelectedGifs((prevState) => {
-      return (prevState.filter((_item, index) => index !== selectedId))
+      return prevState.filter((_item, index) => index !== selectedId);
     });
-  }
-
+  };
 
   return (
-    <>
+    <div className="root-search-input">
+      <div>
+        <Autocomplete
+          autoHighlight
+          id="highlights-demo"
+          sx={{ width: 550 }}
+          clearIcon={null}
+          loading={fetchingGifsList}
+          options={excludedDuplicateData}
+          onChange={(e, newValue) => handleChange(e, newValue)}
+          getOptionLabel={(option) => option.title}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Search for a GIFs"
+              variant="standard"
+            />
+          )}
+          renderOption={(props, option, { inputValue }) => {
+            const matches = match(option.title, inputValue);
+            const parts = parse(option.title, matches);
 
-      <div className="root-search-input">
-        <div>
-          <Autocomplete
-            autoHighlight
-            id="highlights-demo"
-            sx={{ width: 550 }}
-            clearIcon={null}
-            loading={fetchingGifsList}
-            options={excludedDuplicateData}
-            onChange={(e, newValue) => handleChange(e, newValue)}
-            getOptionLabel={(option) => option.title}
-            renderInput={(params) => (
-              <TextField {...params} label="Search for a GIFs" variant="standard" />
-            )}
-            renderOption={(props, option, { inputValue }) => {
-              const matches = match(option.title, inputValue);
-              const parts = parse(option.title, matches);
-
-              return (
-                <li {...props}>
-                  <div>
-                    {parts?.map((part, index) => (
-                      <span
-                        key={index}
-                        style={{
-                          fontWeight: part.highlight ? 700 : 400,
-                        }}
-                      >
-                        {part.text}
-                      </span>
-                    ))}
-                  </div>
-                </li>
-              );
-            }}
-          />
-        </div>
-        <div className="gifContent">
-          {selectedGifs?.filter((d) => d !== null)?.map((item, index) => {
+            return (
+              <li {...props}>
+                <div>
+                  {parts?.map((part, index) => (
+                    <span
+                      key={index}
+                      style={{
+                        fontWeight: part.highlight ? 700 : 400,
+                      }}
+                    >
+                      {part.text}
+                    </span>
+                  ))}
+                </div>
+              </li>
+            );
+          }}
+        />
+      </div>
+      <div className="gifContent">
+        {selectedGifs
+          ?.filter((d) => d !== null)
+          ?.map((item, index) => {
             return (
               <div key={index}>
-                <GifCard imageUrl={item?.imageUrl} deleteSelectedGif={deleteSelectedGif} selectedId={index} />
+                <GifCard
+                  imageUrl={item?.imageUrl}
+                  deleteSelectedGif={deleteSelectedGif}
+                  selectedId={index}
+                />
               </div>
-            )
+            );
           })}
-        </div>
       </div>
-
-    </>
+    </div>
   );
 }
